@@ -1,5 +1,5 @@
 openai
-puthon-dotenev
+python-dotenev
 qdrant-client
 streamlit
 streamlit-audiorecorder
