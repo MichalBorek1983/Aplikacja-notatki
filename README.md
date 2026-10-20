@@ -1,71 +1,36 @@
-# 🎙️ Audio-Notatki – Twój Inteligentny Asystent
+# 🎙️ Audio Notatki
 
-> **Aplikacja wykorzystująca AI do zamiany mowy na tekst i generowania podsumowań.**
+Aplikacja Streamlit do nagrywania notatek głosowych, ich transkrypcji i wyszukiwania po znaczeniu (wyszukiwanie semantyczne).
 
-![Status](https://img.shields.io/badge/Status-Development-yellow)
+![Status](https://img.shields.io/badge/Status-Prototype-yellow)
 ![Python](https://img.shields.io/badge/Python-3.9+-blue)
-![OpenAI](https://img.shields.io/badge/AI-Whisper%20%26%20GPT-green)
 ![Streamlit](https://img.shields.io/badge/Frontend-Streamlit-red)
 
-## 📄 O Projekcie
-**Aplikacja-notatki** to narzędzie stworzone w celu automatyzacji procesu robienia notatek. Zamiast ręcznie zapisywać spotkania, pomysły czy wykłady, użytkownik może po prostu mówić, a sztuczna inteligencja zajmie się resztą.
+## Jak to działa
 
-Projekt demonstruje praktyczne zastosowanie modeli **OpenAI (Whisper)** do przetwarzania danych nieustrukturyzowanych (audio) oraz **LLM (GPT)** do analizy tekstu.
+1. Nagrywasz notatkę w przeglądarce (`streamlit-audiorecorder`).
+2. Whisper (`whisper-1`) zamienia nagranie na tekst, który możesz poprawić przed zapisem.
+3. Zapisana notatka dostaje embedding (`text-embedding-3-large`, 3072 wymiary) i trafia do kolekcji `notes` w bazie wektorowej Qdrant (podobieństwo kosinusowe).
+4. Zakładka wyszukiwania zwraca 10 notatek najbliższych znaczeniowo do zapytania, razem z wynikiem podobieństwa. Bez zapytania pokazuje 10 notatek z bazy.
 
-### 🔴 Problem
-Notatki głosowe są szybkie do nagrania, ale trudne do przeszukiwania. Odsłuchiwanie godzin nagrań, aby znaleźć jeden fragment, jest nieefektywne.
+Dzięki temu nie trzeba pamiętać dokładnych słów: zapytanie "składniki na naleśniki" może znaleźć notatkę z listą zakupów.
 
-### 🟢 Rozwiązanie
-Aplikacja rozwiązuje ten problem w trzech krokach:
-1.  **Transkrypcja:** Zamienia nagranie audio na tekst z wysoką dokładnością (nawet w języku polskim).
-2.  **Synteza:** Model językowy analizuje treść i tworzy zwięzłe podsumowanie (Summary).
-3.  **Akcja:** Wyciąga z nagrania listę zadań do wykonania (Action Items).
+## Konfiguracja
 
----
+* `OPENAI_API_KEY`: z pliku `.env` albo wpisany w aplikacji.
+* `QDRANT_URL` i `QDRANT_API_KEY`: z pliku `.env` albo ze `st.secrets` (Streamlit Community Cloud).
+* Do przetwarzania audio potrzebny jest `ffmpeg` (lista pakietów systemowych w `packages.txt`).
 
-## ⚙️ Kluczowe Funkcjonalności
-* **Upload plików Audio:** Obsługa formatów `.mp3`, `.wav`, `.m4a`.
-* **Transkrypcja AI:** Wykorzystanie modelu Whisper (przez API OpenAI) dla najlepszej jakości rozpoznawania mowy.
-* **Inteligentne Podsumowania:** Automatyczne generowanie notatki ze spotkania przy użyciu GPT-3.5/GPT-4.
-* **Eksport:** Możliwość pobrania gotowej notatki jako plik tekstowy.
+## Uruchomienie
 
----
+```bash
+pip install -r requirements.txt
+streamlit run app.py
+```
 
-## 🛠️ Stack Technologiczny
+## Ograniczenia
 
-### AI & Backend
-* **Python:** Logika aplikacji.
-* **OpenAI API (Whisper):** Silnik Speech-to-Text.
-* **OpenAI API (ChatCompletion):** Silnik NLP do streszczania tekstu.
+* To prototyp: brak automatycznych podsumowań i wyciągania zadań (wcześniejszy opis tego repozytorium je zapowiadał, ale kod ich nie zawiera).
+* Brak edycji i usuwania zapisanych notatek.
 
-### Frontend
-* **Streamlit:** Interfejs użytkownika pozwalający na szybką interakcję z modelami AI.
-
----
-
-## 🖥️ Jak uruchomić lokalnie?
-
-1.  **Sklonuj repozytorium:**
-    ```bash
-    git clone [https://github.com/MichalBorek1983/Aplikacja-notatki.git](https://github.com/MichalBorek1983/Aplikacja-notatki.git)
-    cd Aplikacja-notatki
-    ```
-
-2.  **Zainstaluj zależności:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3.  **Skonfiguruj klucz API:**
-    Utwórz plik `.streamlit/secrets.toml` lub `.env` i dodaj swój klucz OpenAI:
-    ```toml
-    OPENAI_API_KEY = "sk-twoj-klucz-tutaj"
-    ```
-
-4.  **Uruchom aplikację:**
-    ```bash
-    streamlit run app.py
-    ```
-
----
 *Autor: Michał Borek*
